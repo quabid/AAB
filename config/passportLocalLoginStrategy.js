@@ -34,7 +34,7 @@ module.exports = localLogin = User => {
 
                     // Match the password
                     bcrypt.compare(password, user.password, (err, isMatch) => {
-                        if (err) throw err;
+                        // if (err) throw err;
 
                         if (isMatch) {
                             log(`\n\n\t\tPassword was matched\n\n`);

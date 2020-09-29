@@ -99,7 +99,7 @@ router.post(
 router.post("/login", ensureGuest, (req, res, next) => {
   passport.authenticate("local-login", {
     successRedirect: "/user/dashboard",
-    failureRedirect: "/",
+    failureRedirect: "/about",
     failureFlash: false,
   })(req, res, next);
 });

@@ -6,6 +6,6 @@ const {
 
 router.route("/dashboard").get(ensureAuthenticated, getDashboard);
 
-router.route("/profile").get(ensureAuthenticated, getDashboard);
+router.route("/profile").get(ensureAuthenticated, getProfile);
 
 module.exports = router;
