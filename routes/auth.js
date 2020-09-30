@@ -46,7 +46,7 @@ router.post(
       }
 
       log(errorMessage);
-    //   req.flash("error_message", errorMessage);
+      //   req.flash("error_message", errorMessage);
       res.redirect("/");
     } else {
       const { fname, lname, email, pwd1 } = req.body;
@@ -75,9 +75,9 @@ router.post(
                 .save()
                 .then((user) => {
                   /* req.flash(
-                                        "success_message",
-                                        "You are now registered, Click the menu icon to sign in"
-                                    ); */
+                    "success_message",
+                    "You are now registered, Click the menu icon to sign in"
+                  ); */
                   log(`User registered successfully`);
                   res.redirect("/");
                 })
