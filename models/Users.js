@@ -16,6 +16,8 @@ const UserSchema = new Schema({
   password: {
     type: String,
   },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: Date,
   isAdmin: { type: Boolean, default: false },
 });
 
