@@ -130,10 +130,10 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
           function (err, user) {
             if (!user) {
               // @ts-ignore
-              req.flash(
+              /*  req.flash(
                 "error",
                 "Password reset token is invalid or has expired."
-              );
+              ); */
               return res.redirect("back");
             }
             if (req.body.pwd1 === req.body.pwd2) {
@@ -159,14 +159,16 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
                       // @ts-ignore
                       log(err);
                       // @ts-ignore
-                      req.flash("error_message", err.message);
+                      // req.flash("error_message", err.message);
+                      console.log(err.message);
                       res.redirect("/");
                     });
                 });
               });
             } else {
               // @ts-ignore
-              req.flash("error", "Passwords do not match.");
+              // req.flash("error", "Passwords do not match.");
+              console.log("Passwords do not match.");
               return res.redirect("back");
             }
           }
