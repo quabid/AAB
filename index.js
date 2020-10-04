@@ -30,9 +30,9 @@ require("./config/passport")(passport);
 
 // Routes
 const index = require("./routes/index");
-const auth = require('./routes/auth');
-const user = require('./routes/user');
-const service = require('./routes/service');
+const auth = require("./routes/auth");
+const user = require("./routes/user");
+const service = require("./routes/service");
 
 // Map Global Promise
 mongoose.Promise = global.Promise;
@@ -128,4 +128,5 @@ app.use("/auth", auth);
 app.use("/user", user);
 app.use("/help", service);
 
+// @ts-ignore
 app.listen(PORT, SERVER_STATUS);

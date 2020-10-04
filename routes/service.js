@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+// @ts-ignore
 const passport = require("passport");
 const User = require("../models/Users");
 const async = require("async");
@@ -8,6 +9,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const {
   ensureGuest,
+  // @ts-ignore
   ensureAuthenticated,
 } = require("../custom_modules/AuthenticationChecker");
 const { emailUser, emailPwd, emailProvider } = require("../config/index");
@@ -26,6 +28,7 @@ router.post("/forgot", ensureGuest, function (req, res, next) {
           {
             $or: [{ email: req.body.email }, { userName: req.body.email }],
           },
+          // @ts-ignore
           function (err, user) {
             if (!user) {
               /* req.flash(
@@ -36,7 +39,9 @@ router.post("/forgot", ensureGuest, function (req, res, next) {
               return res.redirect("/service/forgot");
             }
 
+            // @ts-ignore
             user.resetPasswordToken = token;
+            // @ts-ignore
             user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
             user.save(function (err) {
@@ -62,7 +67,7 @@ router.post("/forgot", ensureGuest, function (req, res, next) {
             "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
             "http://" +
             req.headers.host +
-            "/service/reset/" +
+            "/help/reset/" +
             token +
             "\n\n" +
             "If you did not request this, please ignore this email and your password will remain unchanged.\n",
@@ -90,6 +95,7 @@ router.get("/reset/:token", ensureGuest, function (req, res) {
       resetPasswordToken: req.params.token,
       resetPasswordExpires: { $gt: Date.now() },
     },
+    // @ts-ignore
     function (err, user) {
       if (!user) {
         /* req.flash(
@@ -98,12 +104,12 @@ router.get("/reset/:token", ensureGuest, function (req, res) {
                 ); */
         console.log(`Password reset token is invalid or has expired.\n`);
         return res.status(200).json({
-          path: `/service/reset/`,
+          path: `/help/reset/`,
           error: `Invalid or expired token`,
         });
       }
       return res.status(200).json({
-        path: `/service/reset/${req.params.token}`,
+        path: `/help/reset/${req.params.token}`,
         token: req.params.token,
       });
     }
@@ -113,14 +119,17 @@ router.get("/reset/:token", ensureGuest, function (req, res) {
 router.post("/reset/:token", ensureGuest, function (req, res) {
   async.waterfall(
     [
+      // @ts-ignore
       function (done) {
         User.findOne(
           {
             resetPasswordToken: req.params.token,
             resetPasswordExpires: { $gt: Date.now() },
           },
+          // @ts-ignore
           function (err, user) {
             if (!user) {
+              // @ts-ignore
               req.flash(
                 "error",
                 "Password reset token is invalid or has expired."
@@ -128,27 +137,35 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
               return res.redirect("back");
             }
             if (req.body.pwd1 === req.body.pwd2) {
+              // @ts-ignore
               bcrypt.genSalt(10, (err, salt) => {
+                // @ts-ignore
                 bcrypt.hash(req.body.pwd1, salt, (err, hash) => {
-                  if (err) throw err;
+                  // if (err) throw err;
+                  // @ts-ignore
                   user.password = hash;
                   user
                     .save()
+                    // @ts-ignore
                     .then((user) => {
-                      req.flash(
+                      /*  req.flash(
                         "success_message",
                         "Your password was successfully changed"
-                      );
+                      ); */
+                      console.log(`Your password was successfully changed`);
                       res.redirect("/");
                     })
                     .catch((err) => {
+                      // @ts-ignore
                       log(err);
+                      // @ts-ignore
                       req.flash("error_message", err.message);
                       res.redirect("/");
                     });
                 });
               });
             } else {
+              // @ts-ignore
               req.flash("error", "Passwords do not match.");
               return res.redirect("back");
             }
@@ -174,19 +191,22 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
             " has just been changed.\n",
         };
         smtpTransport.sendMail(mailOptions, function (err) {
+          // @ts-ignore
           req.flash("success", "Success! Your password has been changed.");
           done(err);
         });
       },
     ],
+    // @ts-ignore
     function (err) {
       res.redirect("/");
     }
   );
 });
 
+// @ts-ignore
 router.get("/forgot", ensureGuest, (req, res, next) => {
-  res.render("service/user", {
+  res.render("help/user", {
     title: "Password Recovery",
   });
 });
