@@ -3,14 +3,11 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const UserSchema = new Schema({
-  client: {
+  profile: {
     type: Schema.Types.ObjectId,
-    ref: "Client",
+    ref: "Profile",
   },
   email: {
-    type: String,
-  },
-  userName: {
     type: String,
   },
   password: {
