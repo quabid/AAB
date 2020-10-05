@@ -1,25 +1,25 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 // @ts-ignore
-const passport = require("passport");
-const User = require("../models/Users");
-const async = require("async");
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+const passport = require('passport');
+const User = require('../models/Users');
+const async = require('async');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const {
   ensureGuest,
   // @ts-ignore
   ensureAuthenticated,
-} = require("../custom_modules/AuthenticationChecker");
-const { emailUser, emailPwd, emailProvider } = require("../config/index");
+} = require('../custom_modules/AuthenticationChecker');
+const { emailUser, emailPwd, emailProvider } = require('../config/index');
 
-router.post("/forgot", ensureGuest, function (req, res, next) {
+router.post('/forgot', ensureGuest, function (req, res, next) {
   async.waterfall(
     [
       function (done) {
         crypto.randomBytes(20, function (err, buf) {
-          const token = buf.toString("hex");
+          const token = buf.toString('hex');
           done(err, token);
         });
       },
@@ -36,7 +36,7 @@ router.post("/forgot", ensureGuest, function (req, res, next) {
                                 "No account with that email address exists."
                             ); */
               console.log(`User ${req.body.email} not found\n`);
-              return res.redirect("/service/forgot");
+              return res.redirect('/');
             }
 
             // @ts-ignore
@@ -63,33 +63,33 @@ router.post("/forgot", ensureGuest, function (req, res, next) {
           from: `${emailUser}`,
           subject: `Password Reset`,
           text:
-            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
-            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-            "http://" +
+            'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            'http://' +
             req.headers.host +
-            "/help/reset/" +
+            '/help/reset/' +
             token +
-            "\n\n" +
-            "If you did not request this, please ignore this email and your password will remain unchanged.\n",
+            '\n\n' +
+            'If you did not request this, please ignore this email and your password will remain unchanged.\n',
         };
         smtpTransport.sendMail(mailOptions, function (err) {
-          console.log("mail sent");
+          console.log('mail sent');
           /* req.flash(
                         "success_message",
                         `An e-mail has been sent to ${user.email} with further instructions.`
                     ); */
-          done(err, "done");
+          done(err, 'done');
         });
       },
     ],
     function (err) {
       if (err) return next(err);
-      res.redirect("/");
+      res.redirect('/');
     }
   );
 });
 
-router.get("/reset/:token", ensureGuest, function (req, res) {
+router.get('/reset/:token', ensureGuest, function (req, res) {
   User.findOne(
     {
       resetPasswordToken: req.params.token,
@@ -116,7 +116,7 @@ router.get("/reset/:token", ensureGuest, function (req, res) {
   );
 });
 
-router.post("/reset/:token", ensureGuest, function (req, res) {
+router.post('/reset/:token', ensureGuest, function (req, res) {
   async.waterfall(
     [
       // @ts-ignore
@@ -134,7 +134,7 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
                 "error",
                 "Password reset token is invalid or has expired."
               ); */
-              return res.redirect("back");
+              return res.redirect('back');
             }
             if (req.body.pwd1 === req.body.pwd2) {
               // @ts-ignore
@@ -147,29 +147,29 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
                   user
                     .save()
                     // @ts-ignore
-                    .then((user) => {
+                    .then(user => {
                       /*  req.flash(
                         "success_message",
                         "Your password was successfully changed"
                       ); */
                       console.log(`Your password was successfully changed`);
-                      res.redirect("/");
+                      res.redirect('/');
                     })
-                    .catch((err) => {
+                    .catch(err => {
                       // @ts-ignore
                       log(err);
                       // @ts-ignore
                       // req.flash("error_message", err.message);
                       console.log(err.message);
-                      res.redirect("/");
+                      res.redirect('/');
                     });
                 });
               });
             } else {
               // @ts-ignore
               // req.flash("error", "Passwords do not match.");
-              console.log("Passwords do not match.");
-              return res.redirect("back");
+              console.log('Passwords do not match.');
+              return res.redirect('back');
             }
           }
         );
@@ -185,31 +185,32 @@ router.post("/reset/:token", ensureGuest, function (req, res) {
         const mailOptions = {
           to: user.email,
           from: emailUser,
-          subject: "Your password has been changed",
+          subject: 'Your password has been changed',
           text:
-            "Hello,\n\n" +
-            "This is a confirmation that the password for your account " +
+            'Hello,\n\n' +
+            'This is a confirmation that the password for your account ' +
             user.email +
-            " has just been changed.\n",
+            ' has just been changed.\n',
         };
         smtpTransport.sendMail(mailOptions, function (err) {
           // @ts-ignore
-          req.flash("success", "Success! Your password has been changed.");
+          req.flash('success', 'Success! Your password has been changed.');
           done(err);
         });
       },
     ],
     // @ts-ignore
     function (err) {
-      res.redirect("/");
+      res.redirect('/');
     }
   );
 });
 
 // @ts-ignore
-router.get("/forgot", ensureGuest, (req, res, next) => {
-  res.render("help/user", {
-    title: "Password Recovery",
+/* Submit email to /service/forgot route */
+router.get('/forgot', ensureGuest, (req, res, next) => {
+  res.render('help/user', {
+    title: 'Password Recovery',
   });
 });
 
